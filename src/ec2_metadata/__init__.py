@@ -309,6 +309,19 @@ class NetworkInterface(BaseLazyObject):
         return resp.text.splitlines()
 
     @cached_property
+    def tags(self) -> dict[str, str]:
+        tags = {}
+
+        resp = self._get_url(f"{self.metadata_url}tags/instance/", allow_404=True)
+        if not resp.status_code == 404:
+            tags_keys = [line.rstrip("/") for line in resp.text.splitlines()]
+            for tag_key in tags_keys:
+                resp = self._get_url(f"{self.metadata_url}tags/instance/{tag_key}")
+                tag_value = resp.text
+                tags[tag_key] = tag_value
+        return tags
+
+    @cached_property
     def vpc_ipv6_cidr_blocks(self) -> List[str]:
         resp = self.parent._get_url(self._url("vpc-ipv6-cidr-blocks"), allow_404=True)
         if resp.status_code == 404:
