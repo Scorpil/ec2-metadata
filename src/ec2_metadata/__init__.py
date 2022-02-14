@@ -309,7 +309,7 @@ class NetworkInterface(BaseLazyObject):
         return resp.text.splitlines()
 
     @cached_property
-    def tags(self) -> dict[str, str]:
+    def tags(self) -> Dict[str, str]:
         tags = {}
 
         resp = self._get_url(f"{self.metadata_url}tags/instance/", allow_404=True)
